@@ -154,13 +154,12 @@ const EnsaioDetails = () => {
           </MDBTabsLink>
         </MDBTabsItem>
       </MDBTabs>
-      <MDBTabsContent>
+      <MDBTabsContent style={{height: '70vh'}}>
         <MDBTabsPane show={basicActive === "tab1"}>
           <div className="row">
             <div className="col-md-6">
               <h3 className="my-4">Editar ensaio</h3>
               <form onSubmit={updateEnsaio}>
-
                 <MDBInput
                   className="col-md-6 mb-3"
                   type="text"
