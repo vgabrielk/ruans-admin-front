@@ -7,20 +7,17 @@ import {
   MDBContainer,
   MDBCard,
   MDBCardBody,
-  MDBCardTitle,
-  MDBCardText,
   MDBBtn,
-  MDBCardImage,
-  MDBBadge,
   MDBInput,
 } from "mdb-react-ui-kit";
-import React, { useEffect, useState } from "react";
-import api from "../../../services/api";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
+
+import api from "../../../services/api";
+import Select from 'react-select'
 import BackTo from "../../../components/BackTo";
 import Loading from "../../../components/Loading";
-import { CategoryEnsaios, EnsaiosStore } from "../../Store/../Ensaios/Store";
 
 interface ensaioProps {
   id: number;
@@ -32,13 +29,17 @@ interface ensaioProps {
 const SubEnsaiosDetails = () => {
   const params = useParams();
   const [subEnsaio, setSubEnsaio] = useState<ensaioProps | any>({});
+  const [ensaios, setEnsaios] = useState([]);
+
+  const [ensaio_id, setEnsaioId] = useState({value: null, label: ''})
+
   const [loading, setLoading] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
 
   const [title, setTitle] = useState(subEnsaio.title);
   const [image, setImage] = useState(subEnsaio.img);
   const [basicActive, setBasicActive] = useState("tab1");
-  console.log(subEnsaio);
+  console.log(ensaios);
   const handleBasicClick = (value: string) => {
     if (value === basicActive) {
       return;
@@ -76,12 +77,26 @@ const SubEnsaiosDetails = () => {
     }
   };
 
+  const getEnsaios = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get(`/ensaios`);
+      setEnsaios(response.data.ensaiosSelect);
+      setLoading(false);
+    }
+    catch (err) {
+      console.log(err);
+      toast.error("Erro ao carregar dados dos ensaios");
+      setLoading(false);
+    }
+  };
+
   const saveUpdates = async (e: any) => {
     e.preventDefault();
     const payload = {
       title: title || subEnsaio.title,
       img: image || subEnsaio.img,
-      ensaio_id: subEnsaio.ensaio_id
+      ensaio_id: ensaio_id.value || subEnsaio.ensaio_id
     }
     setLoadingButton(true)
     try {
@@ -89,7 +104,7 @@ const SubEnsaiosDetails = () => {
       console.log(response.data.message);
       console.log(response);
       if (response.data.type == "success") {
-        toast.success("Cadastrado com sucesso!");
+        toast.success(response.data.message);
         setLoadingButton(false)
         getSubEnsaios()
       } else {
@@ -101,8 +116,13 @@ const SubEnsaiosDetails = () => {
       console.log(err);
     }
   };
+
   useEffect(() => {
     getSubEnsaios();
+  }, []);
+
+  useEffect(() => {
+    getEnsaios();
   }, []);
 
   return (
@@ -118,7 +138,7 @@ const SubEnsaiosDetails = () => {
           </MDBTabsLink>
         </MDBTabsItem>
       </MDBTabs>
-      <MDBTabsContent>
+      <MDBTabsContent style={{height: '70vh'}}>
         <MDBTabsPane show={basicActive === "tab1"}>
            <div className="row">
             <div className="col-md-6">
@@ -136,6 +156,15 @@ const SubEnsaiosDetails = () => {
                   className="mb-2 col-md-6"
                   type="file"
                   onChange={(e: any) => setImage(e.target.files[0])}
+                />
+                <Select
+                  className="my-3"
+                  options={ensaios?.map((item: any) => ({
+                    value: item.id,
+                    label: item.title
+                  }))}
+                  placeholder={ensaio_id?.value?.length >= 0 ? ensaio_id?.label : subEnsaio?.ensaio?.title}
+                  onChange={(e: any) => setEnsaioId(e)} 
                 />
                 <MDBBtn style={{ width: '180px', height: '34px' }} className="mb-4 d-flex align-items-center justify-content-center" type="submit">
                   {loadingButton ? <Loading /> : 'Enviar'}
