@@ -157,7 +157,7 @@ const CategoryDetails = () => {
                   type="file"
                   onChange={(e: any) => setImage(e.target.files[0])}
                 />
-                <MDBBtn style={{ width: '180px', height: '34px' }} className="mb-4 d-flex align-items-center justify-content-center" type="submit">
+                <MDBBtn style={{ width: '180px', height: '34px' }} className="mt-3 d-flex align-items-center justify-content-center" type="submit">
                   {loadingButton ? <Loading /> : 'Enviar'}
                 </MDBBtn>
               </form>
