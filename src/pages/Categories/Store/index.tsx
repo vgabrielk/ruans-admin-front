@@ -1,46 +1,31 @@
 import {
   MDBContainer,
-  MDBValidation,
   MDBInput,
-  MDBInputGroup,
   MDBBtn,
-  MDBCheckbox,
-  MDBSpinner,
   MDBModalTitle,
 } from "mdb-react-ui-kit";
 
-import React, { Fragment, useEffect, useState } from "react";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+
 import api from "../../../services/api";
-import { useForm } from "react-hook-form";
-import { Toaster, toast } from "react-hot-toast";
 import BackTo from "../../../components/BackTo";
 import Loading from "../../../components/Loading";
 
-type settingProps = {
-  id: number;
-  username: string;
-  email: string;
-  img: string;
-  cpf: string;
-};
 
 const CategoryStore = () => {
-  const userLS = JSON.parse(localStorage.getItem("user") || "{}");
-  const [user, setUser] = useState({});
-
-  const [loadingButton, setLoadingButton] = useState(false)
-
-  const [data, setData] = useState([]);
-  const [links, setLinks] = useState([]);
-  const [loading, setLoading] = useState(false);
-
+  
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
 
+  const [loadingButton, setLoadingButton] = useState(false)
+  
+  const navigate = useNavigate()
 
   const saveUpdates = async (e: any) => {
     e.preventDefault();
-    setLoading(true)
+    setLoadingButton(true)
     const payload = new FormData();
     payload.append("title", title);
     payload.append("img", image);
@@ -50,20 +35,19 @@ const CategoryStore = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log(response.data.message);
-      console.log(response);
       if (response.data.type == "success") {
         toast.success("Cadastrado com sucesso!");
         setTimeout(() => {
-          setLoading(false)
-          window.location.href = "/admin/category";
+          setLoadingButton(false)
+         navigate('/admin/category')
         }, 1000);
       } else {
         toast.error("Erro ao cadastrar");
+        setLoadingButton(false)
       }
     } catch (err) {
       console.log(err);
-      setLoading(false)
+      setLoadingButton(false)
     }
   };
 
@@ -88,7 +72,7 @@ const CategoryStore = () => {
         </div>
         <div className="col-12">
           <MDBBtn style={{ width: '180px', height: '34px' }} className="mb-4 d-flex align-items-center justify-content-center" type="submit">
-            {loadingButton ? <Loading /> : 'Enviar'}
+            {loadingButton ? <Loading /> : 'Cadastrar'}
           </MDBBtn>
         </div>
       </form>
