@@ -7,22 +7,18 @@ import {
   MDBContainer,
   MDBCard,
   MDBCardBody,
-  MDBCardTitle,
-  MDBCardText,
   MDBBtn,
-  MDBCardImage,
-  MDBBadge,
   MDBInput,
-  MDBRow,
-  MDBCol,
 } from "mdb-react-ui-kit";
-import React, { useEffect, useState } from "react";
-import api from "../../../services/api";
-import { useParams } from "react-router-dom";
+
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { EnsaiosStore, CategoryEnsaios } from "../../Ensaios/Store";
+
+import api from "../../../services/api";
 import BackTo from "../../../components/BackTo";
 import Loading from "../../../components/Loading";
-import { EnsaiosStore, CategoryEnsaios } from "../../Ensaios/Store";
 
 interface categoryProps {
   id: number;
@@ -32,16 +28,20 @@ interface categoryProps {
 }
 
 const CategoryDetails = () => {
+
   const params = useParams();
   const [category, setCategory] = useState<categoryProps | any>({});
+
   const [title, setTitle] = useState(category.title);
   const [image, setImage] = useState(category.img);
+
+  const navigate = useNavigate()
 
   const [loading, setLoading] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
 
   const [basicActive, setBasicActive] = useState("tab1");
-  console.log(category);
+
   const handleBasicClick = (value: string) => {
     if (value === basicActive) {
       return;
@@ -52,54 +52,56 @@ const CategoryDetails = () => {
   const deleteCategory = async (id: number) => {
     try {
       const response = await api.delete(`/categorias/${id}`);
-      console.log(response);
       if (response.data.type == "success") {
         toast.success(response.data.message);
         setTimeout(() => {
-          window.location.href = "/admin/category";
+        navigate("/admin/category");
         }, 1000);
-      } else {
+      } 
+      else {
         toast.error(response.data.message);
       }
-    } catch (err) {
+    } 
+    catch (err) {
+      toast.error("Algo de errado aconteceu!");
       console.error(err);
     }
   };
+  
   const getCategory = async () => {
     setLoading(true);
     try {
       const response = await api.get(`/categorias/${params.id}`);
-      console.log(response);
       setCategory(response.data);
       setLoading(false);
-    } catch (err) {
+    } 
+    catch (err) {
       console.log(err);
       toast.error("Erro ao carregar dados da categoria");
       setLoading(false);
     }
   };
 
-  const saveUpdates = async (e: any) => {
+  const updateCategory = async (e: any) => {
     e.preventDefault();
-    const payload = {
-      title: title || category.title,
-      img: image || category.img
-    }
+    const payload = new FormData();
+    payload.append("title", title || category.title);
+    payload.append("img", image || category.title);
     setLoadingButton(true)
     try {
       const response = await api.post(`/categorias/${params.id}`, payload)
-      console.log(response.data.message);
-      console.log(response);
       if (response.data.type == "success") {
-        toast.success("Cadastrado com sucesso!");
+        toast.success(response.data.message);
         setLoadingButton(false)
         getCategory()
-      } else {
-        console.log(response?.data);
+      } 
+      else {
         setLoadingButton(false)
+        toast.error(response.data.message)
       }
     } catch (err) {
       console.log(err);
+      toast.error("Algo de errado aconteceu!");
     }
   };
 
@@ -141,7 +143,7 @@ const CategoryDetails = () => {
           <div className="row">
             <div className="col-md-6">
               <h3 className="my-4">Editar categoria</h3>
-              <form onSubmit={saveUpdates}>
+              <form onSubmit={updateCategory}>
 
                 <MDBInput
                   className="col-md-6 mb-3"

@@ -1,10 +1,10 @@
 export  const cursorPaginator = (item: string) => {
     switch (item) {
       case '&laquo; Previous':
-        return '🡸'
+        return '￩'
         break
       case 'Next &raquo;':
-        return '🡺'
+        return '￫'
         break
       default:
         return item

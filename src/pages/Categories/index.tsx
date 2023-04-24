@@ -9,16 +9,17 @@ import {
   MDBPaginationItem,
   MDBPaginationLink,
   MDBIcon,
-  MDBSpinner,
   MDBInputGroup,
   MDBInput,
 } from "mdb-react-ui-kit";
 
-import React, { Fragment, useEffect, useState } from "react";
-import api from "../../services/api";
+import { Fragment, useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
-import Loading from "../../components/Loading";
 import { cursorPaginator } from "../../components/cursorpaginator";
+
+import api from "../../services/api";
+import Loading from "../../components/Loading";
 
 type userProps = {
   id: number;
@@ -27,30 +28,35 @@ type userProps = {
 };
 
 const Categories = () => {
+
   const [data, setData] = useState([]);
   const [links, setLinks] = useState([]);
+
+  const [search, setSearch] = useState('');
+
   const [loading, setLoading] = useState(false);
 
-  const getData = async (link: string) => {
+  console.log(data)
+  const getData = async (url: string) => {
     setLoading(true);
     try {
-      const response = await api.get(link);
-      console.log(response);
+      const response = await api.get(url);
       setData(response.data.category.data);
       setLinks(response.data.category.links);
       setLoading(false);
     } catch (err) {
       console.log(err);
       setLoading(false);
+      toast.error("Erro ao carregar dados")
     }
   };
-
 
   useEffect(() => {
     getData("/categorias");
   }, []);
+
   return (
-    <MDBContainer className="mt-5" style={{ overflowY: "scroll" }}>
+    <MDBContainer className="mt-5" style={{ overflowY: "auto" }}>
       <Link to="/admin/category/store">
         <MDBBtn>Cadastrar categoria</MDBBtn>
       </Link>
@@ -59,11 +65,15 @@ const Categories = () => {
         <MDBInputGroup className="mt-3 w-100">
           <MDBInput
             onChange={(e) => {
-              getData(`/categorias?title=${e.target.value}`);
+              setSearch(e.target.value)
             }}
             label="Pesquisa por título"
           />
-          <MDBBtn rippleColor="dark">
+          <MDBBtn rippleColor="dark"
+            onClick={() => {
+              getData(`/categorias?title=${search}`);
+            }}
+          >
             <MDBIcon icon="search" />
           </MDBBtn>
         </MDBInputGroup>
