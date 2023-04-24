@@ -168,13 +168,14 @@ const EnsaioDetails = () => {
                   onChange={(e: any) => setTitle(e.target.value)}
                 />
                 <MDBInput
-                  className="mt-3 col-md-6"
+                  className="mb-3 col-md-6"
                   type="file"
                   onChange={(e: any) => setImage(e.target.files[0])}
 
                 />
+                <label>Categoria</label>
                 <Select
-                  className="my-3"
+                  className="mb-3"
                   options={categorias.map((item: any) => ({
                     value: item.id,
                     label: item.title
