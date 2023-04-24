@@ -7,24 +7,18 @@ import {
   MDBContainer,
   MDBCard,
   MDBCardBody,
-  MDBCardTitle,
-  MDBCardText,
   MDBBtn,
-  MDBCardImage,
-  MDBBadge,
   MDBInput,
-  MDBRow,
-  MDBCol,
 } from "mdb-react-ui-kit";
-import React, { useEffect, useState } from "react";
-import api from "../../../services/api";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { SubEnsaios, SubEnsaiosStore } from "../../SubEnsaios/Store";
+
+import api from "../../../services/api";
 import BackTo from "../../../components/BackTo";
 import Loading from "../../../components/Loading";
-import { EnsaiosStore, CategoryEnsaios } from "../Store";
-import SubEnsaiosDetails from "../../SubEnsaios/SubEnsaiosDetails";
-import { SubEnsaios, SubEnsaiosStore } from "../../SubEnsaios/Store";
+import Select from "react-select";
 
 interface ensaioProps {
   id: number;
@@ -36,12 +30,19 @@ interface ensaioProps {
 const EnsaioDetails = () => {
   const params = useParams();
   const [ensaio, setEnsaio] = useState<ensaioProps | any>({});
+  const [categorias, setCategorias] = useState([]);
+  
   const [title, setTitle] = useState(ensaio.title);
   const [image, setImage] = useState("");
+  const [categoria_id, setCategoriaId] = useState({value: null, label: ''})
+
   const [loading, setLoading] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
+
   const [basicActive, setBasicActive] = useState("tab1");
-  console.log(ensaio);
+
+  const navigate = useNavigate();
+
   const handleBasicClick = (value: string) => {
     if (value === basicActive) {
       return;
@@ -52,60 +53,76 @@ const EnsaioDetails = () => {
   const deleteCategory = async (id: number) => {
     try {
       const response = await api.delete(`/ensaios/${id}`);
-      console.log(response);
       if (response.data.type == "success") {
         toast.success(response.data.message);
         setTimeout(() => {
-          window.location.href = `/admin/ensaios/${params.id}`;
+          navigate(`/admin/ensaios/${params.id}`);
         }, 1000);
       } else {
         toast.error(response.data.message);
       }
     } catch (err) {
       console.error(err);
+      toast.error("Algo de errado aconteceu...")
     }
   };
-  const getEnsaios = async () => {
+
+  const getEnsaio = async () => {
     setLoading(true);
     try {
       const response = await api.get(`/ensaios/${params.id}`);
-      console.log(response);
       setEnsaio(response.data);
       setLoading(false);
-    } catch (err) {
+    }
+    catch (err) {
+      console.log(err);
+      toast.error("Erro ao carregar dados do ensaio");
+      setLoading(false);
+    }
+  };
+
+  const getCategorias = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get(`/categorias`);
+      setCategorias(response.data.categorySelect);
+      setLoading(false);
+    }
+    catch (err) {
       console.log(err);
       toast.error("Erro ao carregar dados da categoria");
       setLoading(false);
     }
   };
-
-
-  const saveUpdates = async (e: any) => {
+  const updateEnsaio = async (e: any) => {
     e.preventDefault();
-    const payload = {
-      title: title || ensaio.title,
-      img: image || ensaio.img,
-      categoria_id: ensaio.categoria_id
-    }
+    const payload = new FormData
+    payload.append("title", title || ensaio.title)
+    payload.append("img", image || ensaio.img)
+    payload.append("categoria_id", categoria_id.value || ensaio.categoria_id)
     try {
       setLoadingButton(true)
       const response = await api.post(`/ensaios/${params.id}`, payload)
-      console.log(response.data.message);
-      console.log(response);
       if (response.data.type == "success") {
-        toast.success("Cadastrado com sucesso!");
+        toast.success(response.data.message);
         setLoadingButton(false)
-        getEnsaios()
+        getEnsaio()
       } else {
-        console.log(response?.data);
+        toast.error(response.data.message);
         setLoadingButton(false)
       }
     } catch (err) {
       console.log(err);
+      toast.error("Erro ao tentar atualizar ensaio.")
     }
   };
+
   useEffect(() => {
-    getEnsaios();
+    getEnsaio();
+  }, []);
+
+  useEffect(() => {
+    getCategorias();
   }, []);
 
   return (
@@ -141,8 +158,8 @@ const EnsaioDetails = () => {
         <MDBTabsPane show={basicActive === "tab1"}>
           <div className="row">
             <div className="col-md-6">
-              <h3 className="my-4">Editar categoria</h3>
-              <form onSubmit={saveUpdates}>
+              <h3 className="my-4">Editar ensaio</h3>
+              <form onSubmit={updateEnsaio}>
 
                 <MDBInput
                   className="col-md-6 mb-3"
@@ -152,10 +169,19 @@ const EnsaioDetails = () => {
                   onChange={(e: any) => setTitle(e.target.value)}
                 />
                 <MDBInput
-                  className="mb-2 col-md-6"
+                  className="mt-3 col-md-6"
                   type="file"
                   onChange={(e: any) => setImage(e.target.files[0])}
 
+                />
+                <Select
+                  className="my-3"
+                  options={categorias.map((item: any) => ({
+                    value: item.id,
+                    label: item.title
+                  }))}
+                  placeholder={categoria_id?.value?.length >= 0 ? categoria_id?.label : ensaio?.categoria?.title}
+                  onChange={(e: any) => setCategoriaId(e)} 
                 />
                 <MDBBtn style={{ width: '180px', height: '34px' }} className="mb-4 d-flex align-items-center justify-content-center" type="submit">
                   {loadingButton ? <Loading /> : 'Enviar'}

@@ -102,6 +102,7 @@ export const EnsaiosStore = ({ titlecategory }) => {
     const payload = new FormData();
     payload.append("title", title);
     payload.append("img", img);
+    payload.append("categoria_id", params.id);
     try {
       const response = await api.post(`/ensaios`, payload);
       console.log(response);
