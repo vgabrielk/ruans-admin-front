@@ -13,6 +13,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import api from "../../services/api";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
+import Loading from "../../components/Loading";
 
 type settingProps = {
   id: number;
@@ -28,6 +29,7 @@ const Settings = () => {
 
   const [data, setData] = useState([]);
   const [links, setLinks] = useState([]);
+
   const [loading, setLoading] = useState(false);
 
   const [username, setUsername] = useState("");
@@ -35,7 +37,6 @@ const Settings = () => {
   const [cpf, setCpf] = useState("");
   const [email, setEmail] = useState("");
 
-  const { register, handleSubmit } = useForm();
 
   const saveUpdates = async (e: any) => {
     e.preventDefault();
@@ -63,14 +64,17 @@ const Settings = () => {
   };
 
   const getCurrentUser = async () => {
+    setLoading(true)
     try {
       const response = await api.get(`/users/${userLS.id}`);
       console.log(response.data.user.user);
       setCpf(response.data.user.cpf);
       setEmail(response.data.user.email);
       setUsername(response.data.user.username);
+      setLoading(false)
     } catch (err) {
       console.log(err);
+      setLoading(false)
     }
   };
 
@@ -79,9 +83,7 @@ const Settings = () => {
   }, []);
   return (
     <MDBContainer style={{ overflowY: "scroll" }}>
-      {/*<Loading/>
-          <MDBSpinner className="mt-5" size="lg" />
-        </div> */}
+      {loading && <Loading size="lg" />}
       <form onSubmit={saveUpdates} className="row g-3 mt-5">
         <div className="col-md-6">
           <MDBInput

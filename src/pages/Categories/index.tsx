@@ -79,9 +79,7 @@ const Categories = () => {
         </MDBInputGroup>
       ) : null}
       {loading ? (
-        <div className="d-flex justify-content-center mt-5 w-100">
           <Loading />
-        </div>
       ) : (
         <div className="table-responsive">
           {!data.length ? (

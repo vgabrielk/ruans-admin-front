@@ -28,7 +28,7 @@ interface userProps {
 
 const DashboardDetails = () => {
   const params = useParams();
-  const [user, setUser] = useState<userProps>({});
+  const [user, setUser] = useState<userProps | any>({});
   const [loading, setLoading] = useState(false);
 
   const [basicActive, setBasicActive] = useState("tab1");

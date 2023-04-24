@@ -53,6 +53,7 @@ const CategoryStore = () => {
 
   return (
     <MDBContainer className="mt-5" style={{ overflowY: "scroll" }}>
+       {loadingButton && <Loading size="lg" />}
       <BackTo url="/admin/category" />
       <form onSubmit={saveUpdates} className="row g-3">
         <MDBModalTitle>Cadastrar categoria</MDBModalTitle>
@@ -71,8 +72,8 @@ const CategoryStore = () => {
           />
         </div>
         <div className="col-12">
-          <MDBBtn style={{ width: '180px', height: '34px' }} className="mb-4 d-flex align-items-center justify-content-center" type="submit">
-            {loadingButton ? <Loading /> : 'Cadastrar'}
+          <MDBBtn  className="mb-4 d-flex align-items-center justify-content-center" type="submit">
+            Cadastrar
           </MDBBtn>
         </div>
       </form>

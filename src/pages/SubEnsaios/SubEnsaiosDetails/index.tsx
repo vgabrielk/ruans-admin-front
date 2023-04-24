@@ -31,10 +31,9 @@ const SubEnsaiosDetails = () => {
   const [subEnsaio, setSubEnsaio] = useState<ensaioProps | any>({});
   const [ensaios, setEnsaios] = useState([]);
 
-  const [ensaio_id, setEnsaioId] = useState({value: null, label: ''})
+  const [ensaio_id, setEnsaioId] = useState({ value: null, label: '' })
 
   const [loading, setLoading] = useState(false);
-  const [loadingButton, setLoadingButton] = useState(false);
 
   const [title, setTitle] = useState(subEnsaio.title);
   const [image, setImage] = useState(subEnsaio.img);
@@ -47,7 +46,7 @@ const SubEnsaiosDetails = () => {
     setBasicActive(value);
   };
 
-  const deleteCategory = async (id: number) => {
+  const deleteSubEnsaio = async (id: number) => {
     try {
       const response = await api.delete(`/subensaios/${id}`);
       console.log(response);
@@ -98,19 +97,19 @@ const SubEnsaiosDetails = () => {
       img: image || subEnsaio.img,
       ensaio_id: ensaio_id.value || subEnsaio.ensaio_id
     }
-    setLoadingButton(true)
+    setLoading(true)
     try {
       const response = await api.post(`/subensaios/${params.id}`, payload)
       console.log(response.data.message);
       console.log(response);
       if (response.data.type == "success") {
         toast.success(response.data.message);
-        setLoadingButton(false)
+        setLoading(false)
         getSubEnsaios()
       } else {
         console.log(response?.data);
         toast.error("Erro ao cadastrar")
-        setLoadingButton(false)
+        setLoading(false)
       }
     } catch (err) {
       console.log(err);
@@ -127,6 +126,7 @@ const SubEnsaiosDetails = () => {
 
   return (
     <MDBContainer className="mt-5" style={{ overflowY: "scroll" }}>
+      {loading && <Loading />}
       <BackTo url={`/admin/ensaios/${subEnsaio?.ensaio_id}`} />
       <MDBTabs className="mb-3">
         <MDBTabsItem>
@@ -138,9 +138,9 @@ const SubEnsaiosDetails = () => {
           </MDBTabsLink>
         </MDBTabsItem>
       </MDBTabs>
-      <MDBTabsContent style={{height: '70vh'}}>
+      <MDBTabsContent style={{ height: '70vh' }}>
         <MDBTabsPane show={basicActive === "tab1"}>
-           <div className="row">
+          <div className="row">
             <div className="col-md-6">
               <h3 className="my-4">Editar imagem</h3>
               <form onSubmit={saveUpdates}>
@@ -165,10 +165,10 @@ const SubEnsaiosDetails = () => {
                     label: item.title
                   }))}
                   placeholder={ensaio_id?.value?.length >= 0 ? ensaio_id?.label : subEnsaio?.ensaio?.title}
-                  onChange={(e: any) => setEnsaioId(e)} 
+                  onChange={(e: any) => setEnsaioId(e)}
                 />
-                <MDBBtn style={{ width: '180px', height: '34px' }} className="mb-4 d-flex align-items-center justify-content-center" type="submit">
-                  {loadingButton ? <Loading /> : 'Enviar'}
+                <MDBBtn  className="mb-4 d-flex align-items-center justify-content-center" type="submit">
+                  Enviar
                 </MDBBtn>
               </form>
             </div>
@@ -178,21 +178,13 @@ const SubEnsaiosDetails = () => {
                   className="border rounded d-flex justiy-content-center"
                   style={{ height: "300px" }}
                 >
-                  {loading ? (
-                    <div className="d-flex justify-content-center mt-5 w-100">
-                      <Loading />
-                    </div>
-                  ) : (
-                    <img
-                      className="img-center-details"
-                      width={"100%"}
-                      src={`http://localhost:8000/img/subensaios/${subEnsaio.img}`}
-                    />
-
-                  )}
-
+                  <img
+                    className="img-center-details"
+                    width={"100%"}
+                    src={`http://localhost:8000/img/subensaios/${subEnsaio.img}`}
+                  />
                 </MDBCardBody>
-                <MDBBtn onClick={() => deleteCategory(subEnsaio.id)}>
+                <MDBBtn onClick={() => deleteSubEnsaio(subEnsaio.id)}>
                   Clique aqui para deletar imagem
                 </MDBBtn>
               </MDBCard>

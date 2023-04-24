@@ -29,61 +29,59 @@ export const SubEnsaios = (props: categoryProps) => {
 
   return (
     <Fragment>
-     {loading ? (
-        <Loading />
-      ) : (
-        <div className="table-responsive">
-          {!props?.data?.length ? (
-            <MDBBadge className="mt-5">
-              Não encontramos resultados para a pesquisa!
-            </MDBBadge>
-          ) : (
-            <MDBTable align="middle">
-              <MDBTableHead>
-                <tr>
-                  <th scope="col">Nome</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Actions</th>
-                </tr>
-              </MDBTableHead>
-              <Fragment>
-                <MDBTableBody>
-                  {props.data.map((item: any) => (
-                    <tr key={item.id}>
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <img
-                            src={`http://localhost:8000/img/subensaios/${item.img}`}
-                            alt=""
-                            style={{ width: "45px", height: "45px" }}
-                            className="rounded-circle"
-                          />
-                          <div className="ms-3">
-                            <p className="fw-bold mb-1">{item.title}</p>
-                          </div>
+      {loading && <Loading size="lg" />}
+
+      <div className="table-responsive">
+        {!props?.data?.length ? (
+          <MDBBadge className="mt-5">
+            Não encontramos resultados para a pesquisa!
+          </MDBBadge>
+        ) : (
+          <MDBTable align="middle">
+            <MDBTableHead>
+              <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </MDBTableHead>
+            <Fragment>
+              <MDBTableBody>
+                {props.data.map((item: any) => (
+                  <tr key={item.id}>
+                    <td>
+                      <div className="d-flex align-items-center">
+                        <img
+                          src={`http://localhost:8000/img/subensaios/${item.img}`}
+                          alt=""
+                          style={{ width: "45px", height: "45px" }}
+                          className="rounded-circle"
+                        />
+                        <div className="ms-3">
+                          <p className="fw-bold mb-1">{item.title}</p>
                         </div>
-                      </td>
-                      <td>
-                        <MDBBadge color="success" pill>
-                          Active
-                        </MDBBadge>
-                      </td>
-                      <td>
-                        <Link
-                          style={{ fontSize: "13px" }}
-                          to={`/admin/subensaios/${item.id}`}
-                        >
-                          DETALHES
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </MDBTableBody>
-              </Fragment>
-            </MDBTable>
-          )}
-        </div>
-      )}
+                      </div>
+                    </td>
+                    <td>
+                      <MDBBadge color="success" pill>
+                        Active
+                      </MDBBadge>
+                    </td>
+                    <td>
+                      <Link
+                        style={{ fontSize: "13px" }}
+                        to={`/admin/subensaios/${item.id}`}
+                      >
+                        DETALHES
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </MDBTableBody>
+            </Fragment>
+          </MDBTable>
+        )}
+      </div>
     </Fragment>
   );
 };

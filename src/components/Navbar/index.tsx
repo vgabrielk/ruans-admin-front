@@ -65,10 +65,7 @@ const Navbar = () => {
         <MDBRipple className="w-100">
           <MDBListGroupItem action noBorders className="px-3">
             <MDBIcon className="me-4" fas icon="user" />
-            {loading ? (
-              <Loading/>
-
-            ) : userName}
+            {userName}
           </MDBListGroupItem>
         </MDBRipple>
         <Link to="/admin/dashboard">

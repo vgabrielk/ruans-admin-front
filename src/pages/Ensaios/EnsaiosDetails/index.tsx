@@ -31,13 +31,12 @@ const EnsaioDetails = () => {
   const params = useParams();
   const [ensaio, setEnsaio] = useState<ensaioProps | any>({});
   const [categorias, setCategorias] = useState([]);
-  
+
   const [title, setTitle] = useState(ensaio.title);
   const [image, setImage] = useState("");
-  const [categoria_id, setCategoriaId] = useState({value: null, label: ''})
+  const [categoria_id, setCategoriaId] = useState({ value: null, label: '' })
 
   const [loading, setLoading] = useState(false);
-  const [loadingButton, setLoadingButton] = useState(false);
 
   const [basicActive, setBasicActive] = useState("tab1");
 
@@ -50,13 +49,13 @@ const EnsaioDetails = () => {
     setBasicActive(value);
   };
 
-  const deleteCategory = async (id: number) => {
+  const deleteEnsaio = async (id: number) => {
     try {
       const response = await api.delete(`/ensaios/${id}`);
       if (response.data.type == "success") {
         toast.success(response.data.message);
         setTimeout(() => {
-          navigate(`/admin/ensaios/${params.id}`);
+          navigate(`/admin/category/${ensaio.categoria.id}`);
         }, 1000);
       } else {
         toast.error(response.data.message);
@@ -101,15 +100,15 @@ const EnsaioDetails = () => {
     payload.append("img", image || ensaio.img)
     payload.append("categoria_id", categoria_id.value || ensaio.categoria_id)
     try {
-      setLoadingButton(true)
+      setLoading(true)
       const response = await api.post(`/ensaios/${params.id}`, payload)
       if (response.data.type == "success") {
         toast.success(response.data.message);
-        setLoadingButton(false)
+        setLoading(false)
         getEnsaio()
       } else {
         toast.error(response.data.message);
-        setLoadingButton(false)
+        setLoading(false)
       }
     } catch (err) {
       console.log(err);
@@ -127,6 +126,7 @@ const EnsaioDetails = () => {
 
   return (
     <MDBContainer className="mt-5" style={{ overflowY: "scroll" }}>
+       {loading && <Loading size="lg" />}
       <BackTo url={`/admin/category/${ensaio?.categoria_id}`} />
       <MDBTabs className="mb-3">
         <MDBTabsItem>
@@ -154,7 +154,7 @@ const EnsaioDetails = () => {
           </MDBTabsLink>
         </MDBTabsItem>
       </MDBTabs>
-      <MDBTabsContent style={{height: '70vh'}}>
+      <MDBTabsContent style={{ height: '70vh' }}>
         <MDBTabsPane show={basicActive === "tab1"}>
           <div className="row">
             <div className="col-md-6">
@@ -181,10 +181,10 @@ const EnsaioDetails = () => {
                     label: item.title
                   }))}
                   placeholder={categoria_id?.value?.length >= 0 ? categoria_id?.label : ensaio?.categoria?.title}
-                  onChange={(e: any) => setCategoriaId(e)} 
+                  onChange={(e: any) => setCategoriaId(e)}
                 />
-                <MDBBtn style={{ width: '180px', height: '34px' }} className="mb-4 d-flex align-items-center justify-content-center" type="submit">
-                  {loadingButton ? <Loading /> : 'Enviar'}
+                <MDBBtn className="mb-4 d-flex align-items-center justify-content-center" type="submit">
+                  Enviar
                 </MDBBtn>
               </form>
             </div>
@@ -194,21 +194,17 @@ const EnsaioDetails = () => {
                   className="border rounded d-flex justiy-content-center"
                   style={{ height: "300px" }}
                 >
-                  {loading ? (
-                    <div className="d-flex justify-content-center mt-5 w-100">
-                      <Loading size="lg" />
-                    </div>
-                  ) : (
-                    <img
-                      className="img-center-details"
-                      width={"100%"}
-                      src={`http://localhost:8000/img/ensaios/${ensaio.img}`}
+                  <img
+                    className="img-center-details"
+                    width={"100%"}
+                    src={`http://localhost:8000/img/ensaios/${ensaio.img}`}
 
-                    />
-                  )}
+                  />
                 </MDBCardBody>
-                <MDBBtn onClick={() => deleteCategory(ensaio.id)}>
-                  Clique aqui para deletar categoria
+                <MDBBtn
+                  onClick={() => deleteEnsaio(ensaio.id)}
+                  type="submit">
+                  DELETAR ENSAIO
                 </MDBBtn>
               </MDBCard>
             </div>

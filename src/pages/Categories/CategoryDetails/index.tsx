@@ -111,6 +111,7 @@ const CategoryDetails = () => {
 
   return (
     <MDBContainer className="mt-5" style={{ overflowY: "scroll" }}>
+       {loading && <Loading size="lg" />}
       <BackTo url="/admin/category" />
       <MDBTabs className="mb-3">
         <MDBTabsItem>
@@ -157,8 +158,8 @@ const CategoryDetails = () => {
                   type="file"
                   onChange={(e: any) => setImage(e.target.files[0])}
                 />
-                <MDBBtn style={{ width: '180px', height: '34px' }} className="mt-3 d-flex align-items-center justify-content-center" type="submit">
-                  {loadingButton ? <Loading /> : 'Enviar'}
+                <MDBBtn  className="mt-3 d-flex align-items-center justify-content-center" type="submit">
+                  Enviar
                 </MDBBtn>
               </form>
             </div>
@@ -168,19 +169,11 @@ const CategoryDetails = () => {
                   className="border rounded d-flex justiy-content-center"
                   style={{ height: "300px" }}
                 >
-                  {loading ? (
-                    <div className="d-flex justify-content-center mt-5 w-100">
-                      <Loading />
-                    </div>
-                  ) : (
                     <img
                       className="img-center-details"
                       width={"100%"}
                       src={`http://localhost:8000/img/categorias/${category.img}`}
                     />
-
-                  )}
-
                 </MDBCardBody>
                 <MDBBtn onClick={() => deleteCategory(category.id)}>
                   Clique aqui para deletar categoria

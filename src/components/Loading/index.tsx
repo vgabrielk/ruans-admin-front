@@ -6,7 +6,9 @@ type Props = {
 }
 const Loading = ({size} : Props) => {
   return (
-      <MDBSpinner grow size={size || 'sm'} />
+    <div className="content-spinner">
+      <MDBSpinner className="spinner" grow size={size || 'lg'} />
+    </div>
   );
 };
 

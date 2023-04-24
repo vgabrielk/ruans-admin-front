@@ -9,6 +9,7 @@ import {
 } from "mdb-react-ui-kit";
 import api from "../../services/api";
 import { toast } from "react-hot-toast";
+import Loading from "../../components/Loading";
 
 const Login = () => {
   const [username, setUserName] = useState("");
@@ -53,6 +54,7 @@ const Login = () => {
       <MDBContainer
         className="p-3 my-5 d-flex justify-content-center flex-column form-login-data"
       >
+       {loading && <Loading size="lg" />}
         <img
           className="mb-4 rounded-circle mx-auto"
           width="80px"
@@ -82,11 +84,6 @@ const Login = () => {
           className="mb-4 d-flex align-items-center justify-content-center"
         >
           Entrar
-          {loading && (
-            <MDBSpinner size="sm" className="ms-3">
-              <span className="visually-hidden">Loading...</span>
-            </MDBSpinner>
-          )}
         </MDBBtn>
       </MDBContainer>
     </form>

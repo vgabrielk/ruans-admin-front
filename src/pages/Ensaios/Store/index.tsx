@@ -15,7 +15,7 @@ import {
 import React, { Fragment, useState } from "react";
 import { toast } from "react-hot-toast";
 import api from "../../../services/api";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Loading from "../../../components/Loading";
 
 interface categoryProps {
@@ -27,7 +27,6 @@ interface categoryProps {
 
 export const CategoryEnsaios = (props: categoryProps) => {
   const [loading, setLoading] = useState(false);
-  console.log(props)
   return (
     <Fragment>
       <h3 className="ms-4 py-2 fs-5">Ensaios da categoria : {props.title}</h3>
@@ -94,32 +93,41 @@ export const CategoryEnsaios = (props: categoryProps) => {
 
 export const EnsaiosStore = ({ titlecategory }) => {
   const params = useParams();
+  
   const [title, setTitle] = useState("");
   const [img, setImg] = useState("");
 
+  const [loadingButton, setLoadingButton] = useState(false)
+
+  const navigate = useNavigate();
+
   const createEnsaio = async (e: any) => {
     e.preventDefault();
+    setLoadingButton(true)
     const payload = new FormData();
     payload.append("title", title);
     payload.append("img", img);
     payload.append("categoria_id", params.id);
     try {
       const response = await api.post(`/ensaios`, payload);
-      console.log(response);
       if (response.data.type == "success") {
         toast.success(response.data.message);
         setTimeout(() => {
-          window.location.href = `/admin/category/${params.id}`;
+          setLoadingButton(false)
+          window.location.reload()
         }, 1000);
       } else {
+        setLoadingButton(false)
         toast.error(response.data.message);
       }
     } catch (err) {
+      setLoadingButton(false)
       console.error(err);
     }
   };
   return (
     <Fragment>
+       {loadingButton && <Loading size="lg" />}
       <form className="form" onSubmit={createEnsaio}>
         <MDBRow>
           <MDBCardTitle className="fs-5">
@@ -142,8 +150,11 @@ export const EnsaiosStore = ({ titlecategory }) => {
             />
           </MDBCol>
         </MDBRow>
-        <MDBBtn type="submit">
-          Cadastrar
+        <MDBBtn
+          
+          className="mb-4 d-flex align-items-center justify-content-center"
+          type="submit">
+          Cadastrar ensaio
         </MDBBtn>
       </form>
     </Fragment>
