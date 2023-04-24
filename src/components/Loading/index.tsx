@@ -1,11 +1,12 @@
 import { MDBSpinner } from "mdb-react-ui-kit";
 import React from "react";
 
-const Loading = () => {
+type Props = {
+  size?: any
+}
+const Loading = ({size} : Props) => {
   return (
-    <div className="d-flex justify-content-center mt-5 w-100">
-      <MDBSpinner size="lg" />
-    </div>
+      <MDBSpinner grow size={size || 'sm'} />
   );
 };
 

@@ -4,16 +4,19 @@ import {
   MDBListGroup,
   MDBListGroupItem,
   MDBRipple,
+  MDBSpinner,
 } from "mdb-react-ui-kit";
 
 import React, { Fragment, useEffect, useState } from "react";
 import api from "../../services/api";
 import { Link, useLocation } from "react-router-dom";
+import Loading from "../Loading";
 
 const Navbar = () => {
   const [userName, setUserName] = useState("");
   const location = useLocation();
   const [menu, setMenu] = useState(true);
+  const [loading, setLoading] = useState(false)
   const logout = async () => {
     const response = await api.get("/logout");
 
@@ -25,12 +28,15 @@ const Navbar = () => {
   const userLS = JSON.parse(localStorage.getItem("user") || "{}");
 
   const getCurrentUser = async () => {
+    setLoading(true)
     try {
       const response = await api.get(`/users/${userLS.id}`);
       console.log(response.data.user.user);
       setUserName(response.data.user.username);
+      setLoading(false)
     } catch (err) {
       console.log(err);
+      setLoading(false)
     }
   };
 
@@ -40,7 +46,7 @@ const Navbar = () => {
 
   useEffect(() => {
     setMenu(false)
-  },[location])
+  }, [location])
 
   return (
     <Fragment>
@@ -54,15 +60,19 @@ const Navbar = () => {
       <MDBListGroup
         className={menu ? 'navbar-content active' : 'navbar-content'}
         light
+
       >
-        <MDBRipple  className="w-100">
+        <MDBRipple className="w-100">
           <MDBListGroupItem action noBorders className="px-3">
             <MDBIcon className="me-4" fas icon="user" />
-            {userName}
+            {loading ? (
+              <Loading/>
+
+            ) : userName}
           </MDBListGroupItem>
         </MDBRipple>
         <Link to="/admin/dashboard">
-          <MDBRipple  className="w-100">
+          <MDBRipple className="w-100">
             <MDBListGroupItem
               action
               noBorders
@@ -76,7 +86,7 @@ const Navbar = () => {
         </Link>
 
         <Link to="/admin/settings">
-          <MDBRipple  className="w-100">
+          <MDBRipple className="w-100">
             <MDBListGroupItem
               action
               noBorders
@@ -89,7 +99,7 @@ const Navbar = () => {
           </MDBRipple>
         </Link>
         <Link to="/admin/category">
-          <MDBRipple  className="w-100">
+          <MDBRipple className="w-100">
             <MDBListGroupItem
               action
               noBorders
@@ -101,7 +111,7 @@ const Navbar = () => {
             </MDBListGroupItem>
           </MDBRipple>
         </Link>
-        <MDBRipple  className="w-100">
+        <MDBRipple className="w-100">
           <MDBListGroupItem
             style={{ cursor: "pointer" }}
             action

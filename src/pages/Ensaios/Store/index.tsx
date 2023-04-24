@@ -31,10 +31,12 @@ export const CategoryEnsaios = (props: categoryProps) => {
   return (
     <Fragment>
       <h3 className="ms-4 py-2 fs-5">Ensaios da categoria : {props.title}</h3>
-     {loading ? (
-       <Loading />
-       ) : (
-         <div className="table-responsive">
+      {loading ? (
+        <div className="d-flex justify-content-center mt-5 w-100">
+          <Loading />
+        </div>
+      ) : (
+        <div className="table-responsive">
           {!props?.data?.length ? (
             <MDBBadge className="mt-5">
               Não encontramos resultados para a pesquisa!
@@ -90,7 +92,7 @@ export const CategoryEnsaios = (props: categoryProps) => {
   );
 };
 
-export const EnsaiosStore = ({titlecategory}) => {
+export const EnsaiosStore = ({ titlecategory }) => {
   const params = useParams();
   const [title, setTitle] = useState("");
   const [img, setImg] = useState("");
@@ -126,6 +128,7 @@ export const EnsaiosStore = ({titlecategory}) => {
           </MDBCardTitle>
           <MDBCol md="6">
             <MDBInput
+              className="mb-4"
               required
               label="Nome do ensaio"
               onChange={(e) => setTitle(e.target.value)}
@@ -133,13 +136,14 @@ export const EnsaiosStore = ({titlecategory}) => {
           </MDBCol>
           <MDBCol md="6">
             <MDBInput
+              className="mb-4"
               required
               type="file"
               onChange={(e: any) => setImg(e.target.files[0])}
             />
           </MDBCol>
         </MDBRow>
-        <MDBBtn className="mt-4" type="submit">
+        <MDBBtn type="submit">
           Cadastrar
         </MDBBtn>
       </form>

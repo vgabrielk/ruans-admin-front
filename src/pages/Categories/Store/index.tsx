@@ -14,6 +14,7 @@ import api from "../../../services/api";
 import { useForm } from "react-hook-form";
 import { Toaster, toast } from "react-hot-toast";
 import BackTo from "../../../components/BackTo";
+import Loading from "../../../components/Loading";
 
 type settingProps = {
   id: number;
@@ -27,6 +28,8 @@ const CategoryStore = () => {
   const userLS = JSON.parse(localStorage.getItem("user") || "{}");
   const [user, setUser] = useState({});
 
+  const [loadingButton, setLoadingButton] = useState(false)
+
   const [data, setData] = useState([]);
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -34,11 +37,10 @@ const CategoryStore = () => {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
 
-  const { register, handleSubmit } = useForm();
 
-  console.log(image);
   const saveUpdates = async (e: any) => {
     e.preventDefault();
+    setLoading(true)
     const payload = new FormData();
     payload.append("title", title);
     payload.append("img", image);
@@ -53,6 +55,7 @@ const CategoryStore = () => {
       if (response.data.type == "success") {
         toast.success("Cadastrado com sucesso!");
         setTimeout(() => {
+          setLoading(false)
           window.location.href = "/admin/category";
         }, 1000);
       } else {
@@ -60,6 +63,7 @@ const CategoryStore = () => {
       }
     } catch (err) {
       console.log(err);
+      setLoading(false)
     }
   };
 
@@ -83,8 +87,8 @@ const CategoryStore = () => {
           />
         </div>
         <div className="col-12">
-          <MDBBtn type="submit" onSubmit={saveUpdates}>
-            Salvar
+          <MDBBtn style={{ width: '180px', height: '34px' }} className="mb-4 d-flex align-items-center justify-content-center" type="submit">
+            {loadingButton ? <Loading /> : 'Enviar'}
           </MDBBtn>
         </div>
       </form>

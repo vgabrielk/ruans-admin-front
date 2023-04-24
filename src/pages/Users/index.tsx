@@ -18,6 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import api from "../../services/api";
 import { Link } from "react-router-dom";
 import Loading from "../../components/Loading";
+import { cursorPaginator } from "../../components/cursorpaginator";
 
 type userProps = {
   id: number;
@@ -44,18 +45,7 @@ const Users = () => {
     }
   };
 
-  const cursorPaginator = (item : string) => {
-    switch(item) {
-      case '&laquo; Previous' : 
-      return '🡸'
-      break
-      case 'Next &raquo;' : 
-      return '🡺'
-      break
-      default :
-      return item
-    }
-  }
+ 
 
   useEffect(() => {
     getData("/users");
@@ -77,9 +67,11 @@ const Users = () => {
         </MDBBtn>
       </MDBInputGroup>
       {loading ? (
-        <Loading />
-        ) : (
-          <div className="table-responsive">
+        <div className="d-flex justify-content-center mt-5 w-100">
+          <Loading />
+        </div>
+      ) : (
+        <div className="table-responsive">
           {!data.length ? (
             <MDBBadge className="mt-5">
               Não encontramos resultados para a pesquisa!
@@ -122,27 +114,30 @@ const Users = () => {
             </MDBTable>
           )}
         </div>
-      )}
-      {!data.length ? null : (
-        <nav aria-label="...">
-          <MDBPagination circle className="mb-0">
-            {links.map((item: any) => (
-              <MDBPaginationItem key={item.label} active={item.active}>
-                <MDBPaginationLink
-                  href="#"
-                  aria-disabled="true"
-                  onClick={() => {
-                    getData(item.url);
-                  }}
+      )
+      }
+      {
+        !data.length ? null : (
+          <nav aria-label="...">
+            <MDBPagination circle className="mb-0">
+              {links.map((item: any) => (
+                <MDBPaginationItem key={item.label} active={item.active}>
+                  <MDBPaginationLink
+                    href="#"
+                    aria-disabled="true"
+                    onClick={() => {
+                      getData(item.url);
+                    }}
                   >
-                  {cursorPaginator(item.label)}
-                </MDBPaginationLink>
-              </MDBPaginationItem>
-            ))}
-          </MDBPagination>
-        </nav>
-      )}
-    </MDBContainer>
+                    {cursorPaginator(item.label)}
+                  </MDBPaginationLink>
+                </MDBPaginationItem>
+              ))}
+            </MDBPagination>
+          </nav>
+        )
+      }
+    </MDBContainer >
   );
 };
 
